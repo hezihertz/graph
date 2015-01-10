@@ -144,6 +144,58 @@ bool shortest_path(Node n1, Node n2, Container<Node>& path) {
   return true;
 }
 
+/** Find a path between n1 and n2 using breadth first search
+ *
+ * @pre path.size()=0
+ * @pre for all node in graph
+ * 	node.value().queued == false
+ * 	node.value().prev_node.is_valid() == false
+ *
+ * @post path.front() == n2, path.back() == n1
+ * @post 2 consecutive nodes in @a path share an edge, i.e., for
+ *  0<=i<path.size()-1, graph.has_edge(path[i], path[i+1])
+ *
+ * @return true if the shortest path between node @a n1 and @a n2 is found,
+ * @return false otherwise
+ * */
+template <typename Node,
+          template <typename, typename = std::allocator<Node>> class Container>
+bool find_path(Node n1, Node n2, Container<Node>& path) {
+  n1.value().queued = true;
+  std::vector<Node> node_queue{n1};
+  unsigned queue_ptr = 0;
+
+  while (queue_ptr < node_queue.size()) {
+    auto curr_node = node_queue[queue_ptr];
+    if (curr_node == n2)
+      break;
+    for (auto inc_iter = curr_node.edge_begin();
+         inc_iter != curr_node.edge_end(); ++inc_iter) {
+      if ((*inc_iter).node2().value().queued == false) {
+        auto temp_node = (*inc_iter).node2();
+				temp_node.value().prev_node = curr_node;
+				temp_node.value().queued = true;
+				node_queue.push_back(temp_node);
+      }
+    }
+    ++queue_ptr;
+  }
+
+  if (n2.value().queued == false) {
+    // clean up the flags
+    for (auto& node : node_queue)
+      node.value().queued = false;
+    return false;  // meaning n1 and n2 are not connected
+  }
+  while (n2.is_valid()) {	//n1.value().prev_node.is_valid() == false
+    path.push_back(n2);
+    n2 = n2.value().prev_node;
+  }
+  for (auto& node : node_queue)
+    node.value().queued = false;
+  return true;
+}
+
 /** Find bridge between node @a n1 and @a n2, in graph @a g, given n1 and n2 in
  * different subgraphs which are connected through a bridge
  * @return the bridge edge if found, an invalid edge otherwise
@@ -151,7 +203,7 @@ bool shortest_path(Node n1, Node n2, Container<Node>& path) {
 template <typename Graph, typename Node>
 typename Graph::edge_type find_bridge(const Graph& g, Node n1, Node n2) {
   std::vector<Node> path;
-  if (shortest_path(n1, n2, path)) {
+  if (find_path(n1, n2, path)) {
     for (auto n_it = path.rbegin(); n_it != path.rend() - 1; ++n_it)
       if (!is_path_not_direct(*n_it, *(n_it + 1)))
         return g.edge(*n_it, *(n_it + 1));
