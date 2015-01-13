@@ -62,7 +62,7 @@ bool is_path_not_direct(Node n1, Node n2) {
         if (next_node == n2) {
           // found an alternative path and reset visited node indicator before
           // return
-          for (auto n : node_queue)
+          for (auto& n : node_queue)
             n.value().visited = false;
           return true;
         }
@@ -72,7 +72,7 @@ bool is_path_not_direct(Node n1, Node n2) {
     }
     ++queue_ptr;
   }
-  for (auto n : node_queue)
+  for (auto& n : node_queue)
     n.value().visited = false;
   return false;
 }
@@ -127,7 +127,7 @@ bool shortest_path(Node n1, Node n2, Container<Node>& path) {
 
   if (n2.value().visited == false) {
     // clean up the flags
-    for (auto node : unvisited_node_queue) {
+    for (auto& node : unvisited_node_queue) {
       node.value().visited = false;
       node.value().queued = false;
     }
@@ -137,7 +137,7 @@ bool shortest_path(Node n1, Node n2, Container<Node>& path) {
     path.push_back(n2);
     n2 = n2.value().prev_node;
   }
-  for (auto node : unvisited_node_queue) {
+  for (auto& node : unvisited_node_queue) {
     node.value().visited = false;
     node.value().queued = false;
   }
