@@ -22,6 +22,17 @@
  * 5. If no, then we've found the bridge.
  */
 
+struct NodeData;
+typedef Graph<NodeData, int> GraphType;
+typedef typename GraphType::node_type NodeType;
+typedef typename GraphType::edge_type EdgeType;
+
+struct NodeData {
+  bool visited{false};
+  bool queued{false};
+  int distance{std::numeric_limits<int>::max()};
+  NodeType prev_node;
+};
 
 /** Find if neighbor nodes @a n1, and @a n2 have a path between them without
  * using the edge they share, i.e. {n1, n2}
@@ -173,9 +184,9 @@ bool find_path(Node n1, Node n2, Container<Node>& path) {
          inc_iter != curr_node.edge_end(); ++inc_iter) {
       if ((*inc_iter).node2().value().queued == false) {
         auto temp_node = (*inc_iter).node2();
-				temp_node.value().prev_node = curr_node;
-				temp_node.value().queued = true;
-				node_queue.push_back(temp_node);
+        temp_node.value().prev_node = curr_node;
+        temp_node.value().queued = true;
+        node_queue.push_back(temp_node);
       }
     }
     ++queue_ptr;
@@ -187,7 +198,7 @@ bool find_path(Node n1, Node n2, Container<Node>& path) {
       node.value().queued = false;
     return false;  // meaning n1 and n2 are not connected
   }
-  while (n2.is_valid()) {	//n1.value().prev_node.is_valid() == false
+  while (n2.is_valid()) {  // n1.value().prev_node.is_valid() == false
     path.push_back(n2);
     n2 = n2.value().prev_node;
   }
@@ -201,7 +212,7 @@ bool find_path(Node n1, Node n2, Container<Node>& path) {
  * @return the bridge edge if found, an invalid edge otherwise
  */
 template <typename Graph, typename Node>
-typename Graph::edge_type find_bridge(const Graph& g, Node n1, Node n2) {
+EdgeType find_bridge(const Graph& g, Node n1, Node n2) {
   std::vector<Node> path;
   if (find_path(n1, n2, path)) {
     for (auto n_it = path.rbegin(); n_it != path.rend() - 1; ++n_it)
@@ -219,17 +230,6 @@ int main(int argc, char** argv) {
   }
 
   // Construct a Graph
-  struct NodeData;
-  typedef Graph<NodeData, int> GraphType;
-  typedef typename GraphType::node_type NodeType;
-  typedef typename GraphType::edge_type EdgeType;
-
-  struct NodeData {
-    bool visited{false};
-    bool queued{false};
-    int distance{std::numeric_limits<int>::max()};
-    NodeType prev_node;
-  };
   GraphType graph;
   std::vector<NodeType> nodes;
 
