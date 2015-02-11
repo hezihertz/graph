@@ -4,13 +4,15 @@
 #
 
 # Executables to build
-EXEC += bridge_finder
+EXEC += mass_spring
+EXEC += test_nodes
+EXEC += test_edges
 
 # Get the shell name to determine the OS
 UNAME := $(shell uname)
 
 # Define the C++ compiler to use
-CXX := $(shell which g++) -std=c++11
+CXX := $(shell which g++) -std=c++14
 
 # Dependency directory and flags
 DEPSDIR := $(shell mkdir -p .deps; echo .deps)
