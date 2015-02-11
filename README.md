@@ -13,8 +13,8 @@ Tested Environment:
 * Linux Ubuntu: clang-3.5 (or gcc-4.9), libsdl-dev, build-essential
 
 Building:
-* make bridge_finder
+* make mass_spring
 
-Run:
-* ./bridge_finder NODES_FILE TETS_FILE
+Run Example:
+* ./mass_spring NODES_FILE TETS_FILE
 
