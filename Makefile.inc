@@ -1,12 +1,7 @@
-#
-# 'make'        build executable file
-# 'make clean'  removes all .o and executable files
-#
-
-# Executables to build
-EXEC += mass_spring
-EXEC += test_nodes
-EXEC += test_edges
+# Library Directories
+BASE_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
+GRAPH_DIR = $(BASE_DIR)graph
+UTIL_DIR = $(BASE_DIR)CS207
 
 # Get the shell name to determine the OS
 UNAME := $(shell uname)
@@ -24,7 +19,7 @@ DEPSFLAGS = -MD -MF $(DEPSFILE) -MP
 
 # Define any directories containing header files
 #   To include directories use -Ipath/to/files
-INCLUDES += -I.
+INCLUDES += -I. -I$(BASE_DIR) -I$(GRAPH_DIR) -I$(UTIL_DIR)
 
 # Define CXX compile flags
 CXXFLAGS += -O3 -funroll-loops -W -Wall -Wextra #-Wfatal-errors
